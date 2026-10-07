@@ -1,0 +1,246 @@
+1. Introduction to React
+Topics
+What is React?
+1. Why React?
+Problems with traditional DOM manipulation
+Library vs framework
+React ecosystem
+React applications
+SPA concept
+Component-based architecture
+Declarative UI
+Virtual DOM — conceptually
+React's rendering model
+
+User Interaction
+       ↓
+State Change
+       ↓
+React Rendering
+       ↓
+Updated UI
+
+
+2. React Project Setup
+Topics
+Node.js and npm
+Vite
+React project structure
+package.json
+package-lock.json
+src
+public
+main.jsx
+App.jsx
+npm scripts
+Development server
+Production build
+Practice
+
+Create:
+
+react-learning/
+├── src/
+│   ├── components/
+│   ├── pages/
+│   ├── App.jsx
+│   └── main.jsx
+├── public/
+└── package.json
+
+npm create vite@latest react-learning -- --template react
+cd react-learning
+npm install
+
+mkdir src/components src/pages
+
+
+3. JSX
+Topics
+What is JSX?
+// যা আপনি লিখেন (JSX)
+const element = <h1 className="title">Hello</h1>;
+
+// যা কম্পাইলার বানায় (Plain JS)
+import { jsx as _jsx } from 'react/jsx-runtime';
+const element = _jsx('h1', { className: 'title', children: 'Hello' });
+JSX syntax
+JavaScript inside JSX
+Expressions
+JSX attributes
+className
+htmlFor
+Self-closing elements
+Fragments
+JSX rules:
+	Single Root Element
+	Closing Tags
+	CamelCase Naming
+Conditional expressions
+
+Example:
+
+const name = "Masum";
+
+function App() {
+  return <h1>Hello {name}</h1>;
+}
+Practice
+
+Build a profile card using JSX.
+
+
+4. Components
+Topics
+What is a component?
+Functional components
+Component naming (PascalCase)
+Component composition
+Reusable components
+Nested components
+Component hierarchy
+Single Responsibility Principle
+
+Example:
+
+App
+ ├── Navbar
+ ├── Hero
+ ├── ProductList
+ │    ├── ProductCard
+ │    ├── ProductCard
+ │    └── ProductCard
+ └── Footer
+Practice
+
+Build:
+
+Student Management UI
+
+Components:
+
+App
+ ├── Header
+ ├── StudentList
+ │    └── StudentCard
+ └── Footer
+
+5. Props
+Topics
+What are props?
+Passing data
+Receiving props
+Destructuring props
+Default values
+Passing objects
+Passing arrays
+Passing functions
+children
+
+Example:
+
+function UserCard({ name, email }) {
+  return (
+    <div>
+      <h2>{name}</h2>
+      <p>{email}</p>
+    </div>
+  );
+}
+
+Usage:
+
+<UserCard
+  name="Masum"
+  email="masum@example.com"
+/>
+
+
+6. Component Communication
+Topics
+Parent → Child
+
+Using props.
+
+Child → Parent
+
+Using callback functions.
+
+Sibling → Sibling
+
+Using shared parent state.
+
+Important concept
+Parent
+ ├── Child A
+ └── Child B
+
+If Child A needs to communicate with Child B:
+
+Child A
+   ↓
+Parent
+   ↓
+Child B
+Practice
+
+Build a product filter where one component controls the filter and another displays products.
+
+
+7. Conditional Rendering
+Topics
+if
+Ternary operator
+&&
+Multiple conditions
+Conditional components
+Loading UI
+Empty states
+Error states
+
+Example:
+
+{isLoggedIn ? (
+  <Dashboard />
+) : (
+  <Login />
+)}
+Practice
+
+Create:
+
+Loading
+Error
+Empty
+Success
+
+states for a product list.
+
+8. Lists and Keys
+Topics
+Rendering arrays
+map()
+Keys
+Why keys matter
+Why array index is sometimes problematic
+Dynamic lists
+
+Example:
+
+users.map(user => (
+  <UserCard
+    key={user.id}
+    user={user}
+  />
+))
+Practice
+
+Build a dynamic:
+
+Student List
+
+with:
+
+Add student
+Delete student
+Display students
