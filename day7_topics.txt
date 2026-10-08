@@ -1,0 +1,217 @@
+styling in css
+normal css
+tailwind
+
+9. useState
+This is one of the most important React topics.
+
+Topics
+What is state?
+State vs normal variable
+useState
+State updates
+Functional updates
+Multiple states
+Object state
+Array state
+State immutability
+State batching
+
+Example:
+
+const [count, setCount] = useState(0);
+
+setCount(prev => prev + 1);
+Practice
+
+Build:
+
+Counter
+Like button
+Toggle button
+Todo list
+Shopping cart
+
+
+10. State and Immutability
+Topics
+
+Understand why you should not do:
+
+user.name = "John";
+
+Instead:
+
+setUser({
+  ...user,
+  name: "John"
+});
+
+Learn:
+
+Updating objects
+Updating arrays
+Adding items
+Removing items
+Editing items
+Nested state
+Practice
+
+Build a CRUD-style Todo application.
+
+Phase 5 — Events & Forms
+11. Event Handling
+Topics
+onClick
+onChange
+onSubmit
+onKeyDown
+Event object
+Passing arguments
+Preventing default behavior
+
+Example:
+
+<button onClick={() => handleDelete(id)}>
+  Delete
+</button>
+
+
+12. Forms
+Topics
+Controlled components
+Input state
+Textarea
+Select
+Checkbox
+Radio
+Form submission
+Form validation
+Multiple input handling
+
+Example:
+
+const [form, setForm] = useState({
+  name: "",
+  email: ""
+});
+Practice
+
+Build:
+
+Registration Form
+
+Features:
+
+Name
+Email
+Password
+Confirm password
+Gender
+Country
+Terms checkbox
+Validation
+Error messages
+
+Phase 6 — Hooks
+13. useEffect
+Topics
+What is an effect?
+Dependency array
+Mounting
+Updating
+Cleanup
+API requests
+Timers
+Event listeners
+Common mistakes
+Infinite loops
+
+Example:
+
+useEffect(() => {
+  fetchUsers();
+}, []);
+Practice
+
+Build:
+
+Users API Application
+
+Features:
+
+API
+ ↓
+Loading
+ ↓
+Success / Error
+ ↓
+Display users
+
+14. useRef
+Topics
+Referencing DOM elements
+Focus input
+Previous values
+Mutable values
+useRef vs useState
+
+Practice:
+
+Auto-focus input
+Stopwatch
+Previous value tracker
+
+15. useContext
+Topics
+Prop drilling
+Context API
+createContext
+Provider
+useContext
+Global-ish state
+
+Example architecture:
+
+App
+ └── UserProvider
+      ├── Navbar
+      ├── Dashboard
+      └── Profile
+Practice
+
+Build:
+
+Authentication Context
+
+Store:
+
+user
+isAuthenticated
+login()
+logout()
+
+
+16. useReducer
+Topics
+Why useReducer?
+Reducer
+Action
+Dispatch
+Initial state
+Complex state management
+useReducer + Context
+
+Example:
+
+dispatch({
+  type: "ADD_TODO",
+  payload: todo
+});
+Practice
+
+Build a shopping cart using:
+
+useReducer
++
+Context
