@@ -1,0 +1,76 @@
+React Router
+Routing
+Topics
+React Router
+BrowserRouter
+Routes
+Route
+Link
+NavLink
+Nested routes
+Dynamic routes
+URL parameters
+useParams
+Query parameters
+useSearchParams
+useNavigate
+Outlet
+
+Example:
+
+/
+├── /about
+├── /products
+├── /products/:id
+├── /login
+└── /dashboard
+
+Protected Routes
+Topics
+Authentication
+Authorization
+Protected pages
+Public pages
+Role-based access
+
+Example:
+
+Admin
+ ├── Dashboard
+ ├── Users
+ └── Settings
+
+User
+ ├── Dashboard
+ └── Profile
+
+
+React Hook Form
+Topics
+useForm
+register
+handleSubmit
+watch
+setValue
+reset
+Form errors
+Validation
+
+Schema Validation
+
+Learn:
+
+Zod
+Validation schemas
+Type-safe forms
+API validation concepts
+
+Example:
+
+React Hook Form
+       ↓
+     Zod
+       ↓
+Validation
+       ↓
+API
