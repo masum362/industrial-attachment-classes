@@ -1,32 +1,33 @@
-import { Link } from 'react-router'
+import { Link } from "react-router";
 
 const features = [
   {
-    title: 'Fast to set up',
-    text: 'Create an account and start working in minutes. No long forms and no training needed.',
-    icon: 'M13 3L4 14h7l-1 7 9-11h-7l1-7Z',
+    title: "Fast to set up",
+    text: "Create an account and start working in minutes. No long forms and no training needed.",
+    icon: "M13 3L4 14h7l-1 7 9-11h-7l1-7Z",
   },
   {
-    title: 'Works on any device',
-    text: 'The same experience on your phone, tablet and laptop, so your team can work from anywhere.',
-    icon: 'M7 3h10a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Zm5 15h.01',
+    title: "Works on any device",
+    text: "The same experience on your phone, tablet and laptop, so your team can work from anywhere.",
+    icon: "M7 3h10a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Zm5 15h.01",
   },
   {
-    title: 'Secure by default',
-    text: 'Your data stays encrypted and only the people you choose can see it.',
-    icon: 'M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6l7-3Zm-2.5 9l2 2 3.5-4',
+    title: "Secure by default",
+    text: "Your data stays encrypted and only the people you choose can see it.",
+    icon: "M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6l7-3Zm-2.5 9l2 2 3.5-4",
   },
-]
+];
 
 const rows = [
-  { label: 'Website redesign', status: 'In progress', width: 'w-2/3' },
-  { label: 'Customer survey', status: 'Done', width: 'w-full' },
-  { label: 'Mobile app launch', status: 'Starting', width: 'w-1/4' },
-]
+  { label: "Website redesign", status: "In progress", width: "w-2/3" },
+  { label: "Customer survey", status: "Done", width: "w-full" },
+  { label: "Mobile app launch", status: "Starting", width: "w-1/4" },
+];
 
 export default function Home() {
   return (
     <>
+      <title>Home | My App</title>
       {/* Hero */}
       <section className="mx-auto grid max-w-6xl items-center gap-12 px-4 py-16 sm:px-6 md:grid-cols-2 md:py-24">
         <div>
@@ -65,13 +66,18 @@ export default function Home() {
           </div>
           <ul className="space-y-3">
             {rows.map(({ label, status, width }) => (
-              <li key={label} className="rounded-xl border border-slate-200 bg-white p-4">
+              <li
+                key={label}
+                className="rounded-xl border border-slate-200 bg-white p-4"
+              >
                 <div className="flex items-center justify-between text-sm">
                   <span className="font-medium text-slate-900">{label}</span>
                   <span className="text-slate-500">{status}</span>
                 </div>
                 <div className="mt-3 h-1.5 rounded-full bg-slate-100">
-                  <div className={`h-1.5 rounded-full bg-emerald-600 ${width}`} />
+                  <div
+                    className={`h-1.5 rounded-full bg-emerald-600 ${width}`}
+                  />
                 </div>
               </li>
             ))}
@@ -101,8 +107,12 @@ export default function Home() {
                 >
                   <path d={icon} />
                 </svg>
-                <h3 className="mt-4 text-lg font-semibold text-slate-900">{title}</h3>
-                <p className="mt-2 text-base leading-relaxed text-slate-600">{text}</p>
+                <h3 className="mt-4 text-lg font-semibold text-slate-900">
+                  {title}
+                </h3>
+                <p className="mt-2 text-base leading-relaxed text-slate-600">
+                  {text}
+                </p>
               </li>
             ))}
           </ul>
@@ -129,5 +139,5 @@ export default function Home() {
         </div>
       </section>
     </>
-  )
+  );
 }

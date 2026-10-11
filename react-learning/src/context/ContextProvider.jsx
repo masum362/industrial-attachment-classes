@@ -9,10 +9,7 @@ const ContextProvider = ({ children }) => {
   });
 
 
-  
-
-
-  return <Context.Provider value={{ user, setUser }}>{children}</Context.Provider>;
+  return <Context value={{ user, setUser }}>{children}</Context>;
 };
 
 export default ContextProvider;
