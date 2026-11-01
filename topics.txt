@@ -1,0 +1,433 @@
+npm init -y
+npm install -D typescript @types/node tsx
+
+
+
+
+
+
+
+
+
+
+
+
+Generics (type variables)
+
+- Generic functions
+function createPair<S, T>(v1: S, v2: T): [S, T] {
+  return [v1, v2];
+}
+console.log(createPair<string, number>('hello', 42)); // ['hello', 42]
+
+- Generic interfaces
+interface KeyValuePair<K, V> {
+  key: K;
+  value: V;
+}
+
+const session: KeyValuePair<string, boolean> = {
+  key: "is_authenticated",
+  value: true,
+};
+
+- Generic type aliases
+type Result<T, E = Error> = 
+  | { success: true; data: T }
+  | { success: false; error: E };
+
+const outcome: Result<number[]> = {
+  success: true,
+  data: [10, 20, 30]
+};
+
+
+
+
+interface PaginatedData<T> {
+  data: T[];
+  totalRecords: number;
+  currentPage: number;
+}
+
+interface Product {
+  id: string;
+  price: number;
+}
+
+const productCatalog: PaginatedData<Product> = {
+  data: [
+    {
+      id: "1",
+      price: 20,
+    },
+  ],
+  totalRecords: 10,
+  currentPage: 1,
+};
+
+type ApiResponse<T, E = string> =
+  | { success: true; data: T }
+  | { success: false; error: E };
+
+const successRes: ApiResponse<{ token: string }> = {
+  success: true,
+  data: { token: "abc-123" },
+};
+
+const errorRes: ApiResponse<
+  null,
+  { code: number; message: string }
+> = {
+  success: false,
+  error:{
+    code:401,
+    message:"something went wrong"
+  }
+};
+
+
+
+- Generic classes
+class DataStore<T> {
+  private items: T[] = [];
+
+  addItem(item: T): void {
+    this.items.push(item);
+  }
+
+  getItem(index: number): T | undefined {
+    return this.items[index];
+  }
+
+  getAll(): readonly T[] {
+    return this.items;
+  }
+}
+
+const textStore = new DataStore<string>();
+textStore.addItem("Document A");
+const firstDoc = textStore.getItem(0); // string | undefined
+
+- Multiple type parameters
+function pair<T, U>(first: T, second: U): [T, U] {
+  return [first, second];
+}
+
+const coordinatedPair = pair("Port", 8080); // [string, number]
+
+- Generic constraints (extends)
+interface HasLength {
+  length: number;
+}
+
+// T must have at least a .length property
+function logLength<T extends HasLength>(item: T): T {
+  console.log(`Length: ${item.length}`);
+  return item;
+}
+
+logLength("Hello");        // Works: string has length
+logLength([1, 2, 3]);       // Works: Array has length
+logLength({ length: 10 });  // Works: object satisfies interface
+// logLength(42);           // Error: Argument of type 'number' is not assignable to 'HasLength'
+
+- keyof with generics
+// K must be an actual key of T
+function getProperty<T, K extends keyof T>(obj: T, key: K): T[K] {
+  return obj[key];
+}
+
+const user = {
+  id: 101,
+  name: "Rahim",
+  role: "Admin"
+};
+
+const userName = getProperty(user, "name"); // Inferred return type: string
+const userId = getProperty(user, "id");     // Inferred return type: number
+// getProperty(user, "email");              // Error: Argument of type '"email"' is not assignable to 'keyof User'
+
+- typeof in type contexts
+const defaultAppConfig = {
+  endpoint: "https://api.domain.internal",
+  timeoutMs: 3000,
+  retries: 3
+};
+
+// Extracts the structural type of defaultAppConfig
+type AppConfig = typeof defaultAppConfig;
+/*
+Equivalent to:
+type AppConfig = {
+  endpoint: string;
+  timeoutMs: number;
+  retries: number;
+}
+*/
+
+type ConfigKeys = keyof typeof defaultAppConfig; // "endpoint" | "timeoutMs" | "retries"
+
+- Generic defaults
+interface PaginatedResponse<TData, TMeta = { page: number; totalPages: number }> {
+  data: TData[];
+  meta: TMeta;
+}
+
+// Uses default TMeta
+type StandardUserList = PaginatedResponse<{ id: number; name: string }>;
+
+// Overrides TMeta with custom cursor metadata
+type CursorUserList = PaginatedResponse<
+  { id: number; name: string },
+  { nextCursor: string; hasMore: boolean }
+>;
+
+- Reusable API response types
+export interface BaseApiResponse {
+  timestamp: string;
+  path: string;
+}
+
+export type ApiResponse<TData = unknown, TMeta = Record<string, unknown>> = 
+  | {
+      success: true;
+      status: 200 | 201 | 204;
+      data: TData;
+      meta?: TMeta;
+    }
+  | {
+      success: false;
+      status: 400 | 401 | 403 | 404 | 500;
+      error: {
+        code: string;
+        message: string;
+        details?: unknown;
+      };
+    };
+
+// Real-world typed client method:
+async function fetchApi<T>(endpoint: string): Promise<ApiResponse<T>> {
+  const res = await fetch(endpoint);
+  return await res.json();
+}
+
+interface Product {
+  sku: string;
+  price: number;
+}
+
+async function run() {
+  const response = await fetchApi<Product>("/api/products/item-12");
+
+  if (response.success) {
+    // response is narrowed: data is typed as Product
+    console.log(response.data.sku, response.data.price);
+  } else {
+    // response is narrowed: error is typed
+    console.error(`[${response.error.code}] ${response.error.message}`);
+  }
+}
+
+
+OOP & Class-Based Types
+- Classes and constructors
+// Shorthand syntax using Parameter Properties
+class User {
+  constructor(
+    public id: string,
+    public name: string,
+    private passwordHash: string,
+    readonly createdAt: Date = new Date()
+  ) {
+    // No need for: this.id = id; this.name = name; etc.
+    // TypeScript generates those assignments under the hood.
+  }
+}
+
+const user = new User("u_101", "Rahim", "hash_secret_99");
+console.log(user.name);      // "Rahim"
+// user.createdAt = new Date(); // Error: Cannot assign to 'createdAt' because it is a read-only property.
+
+
+- Access modifiers: public, private, protected
+class BankAccount {
+  public accountNumber: string;
+  protected balance: number;
+  private secretPin: number;
+
+  constructor(accNum: string, initialBalance: number, pin: number) {
+    this.accountNumber = accNum;
+    this.balance = initialBalance;
+    this.secretPin = pin;
+  }
+
+  public verifyPin(inputPin: number): boolean {
+    return this.secretPin === inputPin; // Valid: accessible within BankAccount
+  }
+}
+
+class SavingsAccount extends BankAccount {
+  public addInterest(rate: number): void {
+    // Valid: 'balance' is protected, so child classes can read/write it
+    this.balance += this.balance * rate;
+
+    // Error: Property 'secretPin' is private and only accessible within class 'BankAccount'
+    // console.log(this.secretPin);
+  }
+}
+
+const account = new BankAccount("AC-12345", 5000, 4321);
+console.log(account.accountNumber); // Valid: public
+// console.log(account.balance);       // Error: Property 'balance' is protected
+// console.log(account.secretPin);     // Error: Property 'secretPin' is private
+
+
+- readonly properties
+class ServerConfig {
+  readonly host: string;
+  readonly port: number = 8080;
+
+  constructor(host: string, port?: number) {
+    this.host = host;
+    if (port !== undefined) {
+      this.port = port; // Valid: reassignment inside constructor is allowed
+    }
+  }
+
+  updatePort(newPort: number) {
+    // this.port = newPort; // Error: Cannot assign to 'port' because it is a read-only property.
+  }
+}
+
+
+- Inheritance and implements
+interface Loggable {
+  log(): void;
+}
+
+class BaseService implements Loggable {
+  constructor(protected serviceName: string) {}
+
+  log(): void {
+    console.log(`[Service: ${this.serviceName}] Initializing...`);
+  }
+
+  execute(): void {
+    console.log(`Executing base operations.`);
+  }
+}
+
+class PaymentService extends BaseService {
+  constructor() {
+    super("PaymentGateway"); // Must call super() before accessing 'this'
+  }
+
+  // Method Overriding
+  override execute(): void {
+    super.execute(); // Run parent logic
+    console.log(`Processing card payment transaction.`);
+  }
+}
+
+const payment = new PaymentService();
+payment.log();
+payment.execute();
+
+
+- Abstract classes
+abstract class DatabaseConnector {
+  constructor(protected connectionUri: string) {}
+
+  // Concrete method (shared implementation)
+  connect(): void {
+    console.log(`Connected to: ${this.connectionUri}`);
+  }
+
+  // Abstract method (must be implemented by child classes)
+  abstract executeQuery(query: string): Promise<unknown[]>;
+}
+
+class PostgresConnector extends DatabaseConnector {
+  async executeQuery(query: string): Promise<unknown[]> {
+    console.log(`Executing SQL query on PostgreSQL: ${query}`);
+    return [{ id: 1, name: "Sample record" }];
+  }
+}
+
+// const db = new DatabaseConnector("..."); // Error: Cannot create an instance of an abstract class.
+const pg = new PostgresConnector("postgresql://localhost:5432/mydb");
+pg.connect();
+pg.executeQuery("SELECT * FROM users;");
+
+
+- Getters and setters
+class Wallet {
+  private _balanceInCents: number = 0;
+
+  // Getter
+  get balanceInDollars(): number {
+    return this._balanceInCents / 100;
+  }
+
+  // Setter
+  set balanceInDollars(amount: number) {
+    if (amount < 0) {
+      throw new Error("Balance cannot be negative");
+    }
+    this._balanceInCents = Math.round(amount * 100);
+  }
+}
+
+const wallet = new Wallet();
+wallet.balanceInDollars = 25.50; // Invokes setter
+console.log(wallet.balanceInDollars); // Invokes getter: 25.5
+
+
+- Static properties and methods
+class MathUtils {
+  static readonly PI: number = 3.14159;
+
+  static calculateCircleArea(radius: number): number {
+    return this.PI * radius * radius;
+  }
+}
+
+// Accessed directly on the class, without `new`
+console.log(MathUtils.PI); 
+console.log(MathUtils.calculateCircleArea(5));
+
+
+
+Utility Types & Type Manipulation
+- Partial<T>
+- Required<T>
+- Readonly<T>
+- Pick<T, K>
+- Omit<T, K>
+- Record<K, T>
+- Exclude<T, U>
+- Extract<T, U>
+- NonNullable<T>
+- Parameters<T> and ReturnType<T>
+
+- Conditional types
+type IsString<T> = T extends string ? true : false;
+
+type A = IsString<"hello">; // true
+type B = IsString<123>;     // false
+
+- Template literal types
+type Alignment = "top" | "bottom";
+type Side = "left" | "right";
+
+// Generates cross-product: "top-left" | "top-right" | "bottom-left" | "bottom-right"
+type Position = `${Alignment}-${Side}`;
+
+// Enforcing protocol formats
+type Protocol = "http" | "https";
+type Domain = "internal.corp" | "public.api";
+type ValidEndpoint = `${Protocol}://${Domain}`;
+
+const serverUrl: ValidEndpoint = "https://public.api"; // Valid
+// const badUrl: ValidEndpoint = "ftp://public.api";     // Compile error
