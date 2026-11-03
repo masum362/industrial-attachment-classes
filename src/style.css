@@ -100,6 +100,8 @@ button:hover {
   font-size: 0.95rem;
 }
 
+
+
 .task-title.done {
   text-decoration: line-through;
   color: #64748b;
