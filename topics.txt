@@ -1,0 +1,15 @@
+TypeScript with React
+- Typing component props
+- type vs interface for props
+- Typing useState
+- Typing event handlers
+- Form handling
+- Typing useRef
+- Typing useReducer
+- Context API types
+- Custom hooks
+- Children and component composition
+- Typing API data
+- Generics in reusable components
+- React Hook Form and Zod integration
+
