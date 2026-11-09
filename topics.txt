@@ -1,0 +1,99 @@
+
+What is Express.js?
+Express Application Setup
+Routing
+Route Parameters
+Query Parameters
+Request and Response Objects
+Middleware
+Built-in Middleware
+Custom Middleware
+Error Handling Middleware
+Router
+Controller
+Service Layer
+Request Validation
+
+
+import express from 'express';
+
+const app = express();
+
+// Built-in middleware to parse incoming JSON payloads
+app.use(express.json());
+
+// In-memory data store for demonstration
+let items = [
+  { id: 1, name: 'Sample Item' }
+];
+
+// 1. GET /api/items (Read All)
+app.get('/api/items', (req, res) => {
+  res.status(200).json(items);
+});
+
+// 2. GET /api/items/:id (Read One)
+app.get('/api/items/:id', (req, res) => {
+  const id = Number(req.params.id);
+  const item = items.find((i) => i.id === id);
+
+  if (!item) {
+    return res.status(404).json({ error: 'Item not found' });
+  }
+
+  res.status(200).json(item);
+});
+
+// 3. POST /api/items (Create)
+app.post('/api/items', (req, res) => {
+  const { name } = req.body;
+
+  if (!name || typeof name !== 'string') {
+    return res.status(400).json({ error: 'Field "name" is required and must be a string' });
+  }
+
+  const newItem = {
+    id: items.length > 0 ? items[items.length - 1].id + 1 : 1,
+    name
+  };
+
+  items.push(newItem);
+  res.status(201).json(newItem);
+});
+
+// 4. Centralized Error-Handling Middleware
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({ error: 'Internal Server Error' });
+});
+
+app.listen(3000, () => {
+  console.log('API listening on http://localhost:3000');
+});
+
+
+
+ফোল্ডার স্ট্রাকচার
+src/
+├── config/
+│   ├── env.js
+│   └── database.js           # DB client instance (Prisma/Mongoose/pg)
+├── controllers/
+│   └── user.controller.js    # req, res হ্যান্ডেল করার পিওর ফাংশন
+├── services/
+│   └── user.service.js       # Business logic ফাংশন
+├── repositories/
+│   └── user.repository.js    # DB query ফাংশন
+├── routes/
+│   ├── index.js
+│   └── user.routes.js
+├── middleware/
+│   ├── validate.js
+│   └── errorHandler.js
+├── validations/
+│   └── user.validation.js
+├── utils/
+│   ├── apiError.js
+│   └── catchAsync.js         # try-catch রিমুভ করার হায়ার-অর্ডার ফাংশন
+├── app.js
+└── server.js
