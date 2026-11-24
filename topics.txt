@@ -1,0 +1,135 @@
+import { Schema, model } from "mongoose";
+import type { IStudent } from "../types/student.types.js";
+
+const studentSchema = new Schema<IStudent>(
+  {
+    name: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+      lowercase: true,
+    },
+
+    age: {
+      type: Number,
+      required: true,
+      min: 10,
+    },
+
+    isActive: {
+      type: Boolean,
+      default: true,
+    },
+  },
+  {
+    timestamps: true,
+  }
+);
+
+export const Student = model<IStudent>("Student", studentSchema);
+
+
+import { Schema, model } from "mongoose";
+import type { IStudent } from "../types/student.types.js";
+
+const studentSchema = new Schema<IStudent>(
+  {
+    name: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+      lowercase: true,
+    },
+
+    age: {
+      type: Number,
+      required: true,
+      min: 10,
+    },
+
+    isActive: {
+      type: Boolean,
+      default: true,
+    },
+  },
+  {
+    timestamps: true,
+  }
+);
+
+export const Student = model<IStudent>("Student", studentSchema);
+
+
+CRUD
+
+
+Create --> .create(), new Student() --> .save()
+Read ----> find, findOne, findById, findByIdAndUpdate, 
+
+Update --->
+const student = await Student.findByIdAndUpdate(
+  id,
+  { age: 23 },
+  {
+    new: true,
+    runValidators: true,
+  }
+);
+
+Alternative:
+const student = await Student.findById(id);
+
+if (student) {
+  student.age = 23;
+  await student.save();
+}
+
+Delete --->
+findByIdAndDelete
+deleteOne
+deleteMany
+
+
+
+Querying, Filtering, Sorting & Pagination
+
+Filtering:
+const students = await Student.find({
+  age: { $gte: 18 },
+  isActive: true,
+});
+
+Sorting:1 → ascending : -1 → descending
+.sort()
+
+Select fields
+const students = await Student.find().select("name email age");
+
+Exclude password:
+const users = await User.find().select("-password");
+
+Pagination:
+const page = 1;
+const limit = 10;
+
+const students = await Student.find()
+  .skip((page - 1) * limit)
+  .limit(limit);
+
+const total = await Student.countDocuments();
+const totalPages = Math.ceil(total / limit);
+
+
+
