@@ -1,0 +1,200 @@
+Read ----> find, findOne, findById, findByIdAndUpdate, 
+
+Update --->
+const student = await Student.findByIdAndUpdate(
+  id,
+  { age: 23 },
+  {
+    new: true,
+    runValidators: true,
+  }
+);
+
+Alternative:
+const student = await Student.findById(id);
+
+if (student) {
+  student.age = 23;
+  await student.save();
+}
+
+Delete --->
+findByIdAndDelete
+deleteOne
+deleteMany
+
+
+
+Querying, Filtering, Sorting & Pagination
+
+Filtering:
+const students = await Student.find({
+  age: { $gte: 18 },
+  isActive: true,
+});
+
+Sorting:1 → ascending : -1 → descending
+.sort()
+
+Select fields
+const students = await Student.find().select("name email age");
+
+Exclude password:
+const users = await User.find().select("-password");
+
+Pagination:
+const page = 1;
+const limit = 10;
+
+const students = await Student.find()
+  .skip((page - 1) * limit)
+  .limit(limit);
+
+const total = await Student.countDocuments();
+const totalPages = Math.ceil(total / limit);
+
+Validation:
+age: {
+  type: Number,
+  required: [true, "Age is required"],
+  min: [10, "Minimum age is 10"],
+  max: 100,
+}
+
+email: {
+  type: String,
+  required: true,
+  match: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+}
+
+References and populate
+
+import { Schema, model } from "mongoose";
+
+const courseSchema = new Schema(
+  {
+    name: {
+      type: String,
+      required: true,
+    },
+
+    fee: {
+      type: Number,
+      required: true,
+    },
+  },
+  { timestamps: true }
+);
+
+export const Course = model("Course", courseSchema);
+
+
+import { Schema, model, Types } from "mongoose";
+
+interface IStudent {
+  name: string;
+  email: string;
+  course: Types.ObjectId;
+}
+
+const studentSchema = new Schema<IStudent>({
+  name: { type: String, required: true },
+
+  email: { type: String, required: true },
+
+  course: {
+    type: Schema.Types.ObjectId,
+    ref: "Course",
+    required: true,
+  },
+});
+
+export const Student = model<IStudent>("Student", studentSchema);
+
+
+const student = await Student.findById(id).populate("course");
+
+Aggregation
+
+const result = await Student.aggregate([
+  {
+    $group: {
+      _id: null,
+      averageAge: { $avg: "$age" },
+      totalStudents: { $sum: 1 },
+    },
+  },
+]);
+
+
+Common stages
+Stage	Purpose
+$match	Filter
+$group	Group data
+$sort	Sort
+$project	Select/reshape fields
+$limit	Limit results
+$skip	Skip results
+$lookup	Join another collection
+$unwind	Expand an array
+
+Example: filter then group.
+const result = await Student.aggregate([
+  {
+    $match: {
+      age: { $gte: 18 },
+    },
+  {
+    $group: {
+      _id: "$isActive",
+      total: { $sum: 1 },
+    },
+  },
+]);
+
+Aggregation is especially useful for:
+- Dashboard analytics
+- Sales reports
+- Revenue calculations
+- Product statistics
+- Student counts
+- Monthly summaries
+
+Middleware/hooks
+studentSchema.pre("save", function () {
+  this.name = this.name.toUpperCase();
+});
+
+userSchema.pre("save", async function () {
+  if (!this.isModified("password")) return;
+
+  this.password = await bcrypt.hash(this.password, 10);
+});
+
+Transactions
+import mongoose from "mongoose";
+
+const session = await mongoose.startSession();
+
+try {
+  session.startTrans  action();
+
+  await Account.updateOne(
+    { _id: senderId },
+    { $inc: { balance: -500 } },
+    { session }
+  );
+
+  await Account.updateOne(
+    { _id: receiverId },
+    { $inc: { balance: 500 } },
+    { session }
+  );
+
+  await session.commitTransaction();
+} catch (error) {
+  await session.abortTransaction();
+  throw error;
+} finally {
+  await session.endSession();
+}
